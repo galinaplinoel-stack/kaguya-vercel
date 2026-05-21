@@ -217,12 +217,17 @@
             border-bottom: 1px solid var(--border);
             z-index: 100;
         }
-        .nav-logo {
-            font-size: 1.3em;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .nav-logo-img {
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s, filter 0.3s;
+        }
+        .nav-logo-img:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(124, 92, 255, 0.5));
+        }
+        .nav-logo-img img {
+            display: block;
         }
         .nav-links { display: flex; gap: 24px; }
         .nav-links a {
@@ -526,7 +531,7 @@
 
     <!-- Nav -->
     <nav>
-        <div class="nav-logo"> KAGUYA</div>
+        <a href="/" class="nav-logo-img"><img src="/logo.svg" alt="KAGUYA" width="36" height="36"></a>
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#dashboard">Dashboard</a>
