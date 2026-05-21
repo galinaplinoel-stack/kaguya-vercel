@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAGUYA — AI Personality Engine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --card: rgba(20, 20, 35, 0.7);
+            --border: rgba(100, 100, 255, 0.12);
+            --text: #e0e0ff;
+            --dim: #7777aa;
+            --accent: #7c5cff;
+            --accent2: #ff5caa;
+            --accent3: #5cffc7;
+            --glow: rgba(124, 92, 255, 0.25);
+            --warm: #d4a574;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-glow.purple { background: var(--accent); top: -200px; left: -100px; }
+        .bg-glow.pink { background: var(--accent2); bottom: -200px; right: -100px; }
+        .bg-glow.green { background: var(--accent3); top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; }
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.8);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        .nav-logo {
+            font-size: 1.3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 24px; }
+        .nav-links a {
+            color: var(--dim);
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(124, 92, 255, 0.1);
+            border: 1px solid rgba(124, 92, 255, 0.2);
+            color: var(--accent);
+            font-size: 0.8em;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(2.5em, 6vw, 4.5em);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.15em;
+            color: var(--dim);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            box-shadow: 0 4px 20px var(--glow);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--accent); }
+
+        /* Install command */
+        .install-cmd {
+            margin-top: 40px;
+            padding: 16px 28px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: var(--accent3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .install-cmd:hover { border-color: var(--accent3); }
+        .install-cmd .prefix { color: var(--dim); }
+
+        /* Features */
+        .features {
+            position: relative;
+            z-index: 1;
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .features h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 12px;
+        }
+        .features .subtitle {
+            text-align: center;
+            color: var(--dim);
+            margin-bottom: 60px;
+            font-size: 1em;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            padding: 28px;
+            border-radius: 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px var(--glow);
+            border-color: rgba(124, 92, 255, 0.3);
+        }
+        .feature-icon { font-size: 2em; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 1.1em; margin-bottom: 8px; }
+        .feature-card p { font-size: 0.85em; color: var(--dim); line-height: 1.6; }
+
+        /* Dashboard Preview */
+        .dashboard-section {
+            position: relative;
+            z-index: 1;
+            padding: 80px 40px 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-section h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 40px;
+        }
+        .dashboard-frame {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .dashboard-frame .topbar {
+            background: rgba(20, 20, 35, 0.9);
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .dashboard-frame .dot-r { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+        .dashboard-frame .dot-y { width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e; }
+        .dashboard-frame .dot-g { width: 12px; height: 12px; border-radius: 50%; background: #28ca41; }
+
+        /* Dashboard embedded */
+        .dash-container { padding: 20px; background: var(--bg); }
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .dash-header h3 {
+            font-size: 1.3em;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dash-status { display: flex; align-items: center; gap: 8px; color: var(--accent3); font-size: 0.8em; }
+        .dash-status .dot { width: 8px; height: 8px; background: var(--accent3); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        .dash-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+        .dash-card h4 { font-size: 0.85em; color: var(--dim); margin-bottom: 12px; }
+
+        /* Emotion display */
+        .emotion-display { text-align: center; }
+        .emotion-icon { font-size: 2.5em; margin-bottom: 8px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .emotion-name { font-size: 1em; font-weight: 600; margin-bottom: 10px; }
+        .intensity-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .intensity-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 72%; }
+
+        /* Trait bars */
+        .trait { margin-bottom: 8px; }
+        .trait-label { display: flex; justify-content: space-between; font-size: 0.75em; color: var(--dim); margin-bottom: 3px; }
+        .trait-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+        .trait-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent3)); }
+
+        /* Tone grid */
+        .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tone-item { display: flex; justify-content: space-between; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 0.8em; }
+        .tone-item label { color: var(--dim); }
+
+        /* Timeline canvas */
+        .timeline-card { grid-column: 1 / -1; }
+
+        /* API section */
+        .api-section {
+            position: relative;
+            z-index: 1;
+            padding: 80px 40px 100px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .api-section h2 { text-align: center; font-size: 2em; margin-bottom: 40px; }
+        .api-endpoint {
+            padding: 20px;
+            margin-bottom: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s;
+        }
+        .api-endpoint:hover { border-color: var(--accent); }
+        .api-method {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: center;
+        }
+        .method-get { background: rgba(92, 255, 199, 0.15); color: var(--accent3); }
+        .method-post { background: rgba(124, 92, 255, 0.15); color: var(--accent); }
+        .api-path { font-family: monospace; font-size: 0.9em; }
+        .api-desc { color: var(--dim); font-size: 0.8em; margin-left: auto; }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--dim);
+            font-size: 0.8em;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 12px 20px; }
+            .hero { padding: 100px 16px 60px; }
+            .features, .dashboard-section, .api-section { padding: 60px 20px; }
+            .api-desc { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow purple"></div>
+    <div class="bg-glow pink"></div>
+    <div class="bg-glow green"></div>
+
+    <nav>
+        <div class="nav-logo"> KAGUYA</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#api">API</a>
+            <a href="https://pypi.org/project/kaguya/" target="_blank">PyPI</a>
+            <a href="https://github.com/galinaplinoel-stack/KAGUYA" target="_blank">GitHub</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge"> v0.2.0 — Now on PyPI</div>
+        <h1><span>KAGUYA</span><br>AI Personality Engine</h1>
+        <p>Production-grade personality infrastructure for AI beings. Emotions, relationships, evolution, and character-driven interactions — all in one package.</p>
+        <div class="hero-buttons">
+            <a href="https://pypi.org/project/kaguya/" class="btn btn-primary" target="_blank">Get Started</a>
+            <a href="https://github.com/galinaplinoel-stack/KAGUYA" class="btn btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+        <div class="install-cmd" onclick="navigator.clipboard.writeText('pip install kaguya'); this.querySelector('.copy').textContent='Copied!'">
+            <span class="prefix">$</span> pip install kaguya
+            <span class="copy" style="margin-left:auto; color:var(--dim); font-size:0.8em;">click to copy</span>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <h2>Powerful Features</h2>
+        <p class="subtitle">Everything your AI character needs to feel alive</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Personality Traits</h3>
+                <p>Define Big Five personality traits with dynamic modulation. Openness, conscientiousness, extraversion, agreeableness, neuroticism — all configurable.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Emotion Engine</h3>
+                <p>Real-time emotional state tracking with valence-arousal model. Joy, sadness, anger, fear, surprise — emotions that evolve with context.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Relationships</h3>
+                <p>Track and evolve relationships over time. Trust, affection, familiarity — build meaningful connections between AI characters and users.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Evolution</h3>
+                <p>Characters that grow and change. Personality drift, memory consolidation, experience-based adaptation — true character development.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Memory System</h3>
+                <p>Short-term and long-memory with importance scoring. Episodic memories that shape future responses and personality.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"> </div>
+                <h3>Response Modifier</h3>
+                <p>Tone-aware response generation. Warmth, humor, formality, verbosity — output that matches the character's emotional state.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-section" id="dashboard">
+        <h2>Live Dashboard</h2>
+        <div class="dashboard-frame">
+            <div class="topbar">
+                <div class="dot-r"></div>
+                <div class="dot-y"></div>
+                <div class="dot-g"></div>
+            </div>
+            <div class="dash-container">
+                <div class="dash-header">
+                    <h3> KAGUYA Dashboard</h3>
+                    <div class="dash-status"><div class="dot"></div> Demo Mode</div>
+                </div>
+                <div class="dash-grid">
+                    <!-- Emotion -->
+                    <div class="dash-card">
+                        <h4> Emotional State</h4>
+                        <div class="emotion-display">
+                            <div class="emotion-icon" id="demo-emotion-icon"> </div>
+                            <div class="emotion-name" id="demo-emotion-name">Joy</div>
+                            <div class="intensity-bar"><div class="intensity-fill" id="demo-intensity" style="width:72%"></div></div>
+                        </div>
+                    </div>
+                    <!-- Personality -->
+                    <div class="dash-card">
+                        <h4>🎭 Personality Traits</h4>
+                        <div id="demo-traits">
+                            <div class="trait"><div class="trait-label"><span>Openness</span><span>85%</span></div><div class="trait-bar"><div class="trait-fill" style="width:85%"></div></div></div>
+                            <div class="trait"><div class="trait-label"><span>Conscientiousness</span><span>62%</span></div><div class="trait-bar"><div class="trait-fill" style="width:62%"></div></div></div>
+                            <div class="trait"><div class="trait-label"><span>Extraversion</span><span>71%</span></div><div class="trait-bar"><div class="trait-fill" style="width:71%"></div></div></div>
+                            <div class="trait"><div class="trait-label"><span>Agreeableness</span><span>78%</span></div><div class="trait-bar"><div class="trait-fill" style="width:78%"></div></div></div>
+                            <div class="trait"><div class="trait-label"><span>Neuroticism</span><span>34%</span></div><div class="trait-bar"><div class="trait-fill" style="width:34%"></div></div></div>
+                        </div>
+                    </div>
+                    <!-- Tone -->
+                    <div class="dash-card">
+                        <h4>🗣️ Response Tone</h4>
+                        <div class="tone-grid">
+                            <div class="tone-item"><label>Warmth</label><span>78%</span></div>
+                            <div class="tone-item"><label>Humor</label><span>65%</span></div>
+                            <div class="tone-item"><label>Formality</label><span>42%</span></div>
+                            <div class="tone-item"><label>Verbosity</label><span>55%</span></div>
+                        </div>
+                    </div>
+                    <!-- Timeline -->
+                    <div class="dash-card timeline-card">
+                        <h4>📈 Mood Timeline</h4>
+                        <canvas id="timeline-canvas" width="800" height="120" style="width:100%;height:120px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="api-section" id="api">
+        <h2>REST API</h2>
+        <div class="api-endpoint">
+            <span class="api-method method-get">GET</span>
+            <span class="api-path">/api/health</span>
+            <span class="api-desc">Health check</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-get">GET</span>
+            <span class="api-path">/api/personality</span>
+            <span class="api-desc">Get personality traits</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-post">POST</span>
+            <span class="api-path">/api/personality</span>
+            <span class="api-desc">Update personality traits</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-get">GET</span>
+            <span class="api-path">/api/emotion</span>
+            <span class="api-desc">Get current emotional state</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-post">POST</span>
+            <span class="api-path">/api/emotion</span>
+            <span class="api-desc">Trigger emotion update</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-post">POST</span>
+            <span class="api-path">/api/chat</span>
+            <span class="api-desc">Chat with personality-aware response</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-get">GET</span>
+            <span class="api-path">/api/relationships</span>
+            <span class="api-desc">List all relationships</span>
+        </div>
+        <div class="api-endpoint">
+            <span class="api-method method-get">GET</span>
+            <span class="api-path">/api/memory</span>
+            <span class="api-desc">Retrieve memories</span>
+        </div>
+    </section>
+
+    <footer>
+        <p>Built with ❤️ by <a href="https://github.com/galinaplinoel-stack">galinaplinoel-stack</a> · <a href="https://pypi.org/project/kaguya/">PyPI</a> · MIT License</p>
+    </footer>
+
+    <script>
+        // Animate timeline
+        const canvas = document.getElementById('timeline-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let data = [];
+            for (let i = 0; i < 40; i++) {
+                data.push({ v: Math.sin(i * 0.3) * 0.4 + 0.5, a: Math.cos(i * 0.2) * 0.3 + 0.5 });
+            }
+            function drawTimeline() {
+                const w = canvas.width, h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
+                // Valence
+                ctx.strokeStyle = '#7c5cff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                data.forEach((p, i) => {
+                    const x = (i / (data.length - 1)) * w;
+                    const y = h - (p.v * h * 0.8) - 10;
+                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                // Arousal
+                ctx.strokeStyle = '#ff5caa';
+                ctx.beginPath();
+                data.forEach((p, i) => {
+                    const x = (i / (data.length - 1)) * w;
+                    const y = h - (p.a * h * 0.8) - 10;
+                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                // Legend
+                ctx.font = '11px sans-serif';
+                ctx.fillStyle = '#7c5cff';
+                ctx.fillText('— Valence', 10, 15);
+                ctx.fillStyle = '#ff5caa';
+                ctx.fillText('— Arousal', 80, 15);
+            }
+            drawTimeline();
+            // Animate
+            setInterval(() => {
+                data.shift();
+                const last = data[data.length - 1];
+                data.push({
+                    v: Math.max(0, Math.min(1, last.v + (Math.random() - 0.5) * 0.1)),
+                    a: Math.max(0, Math.min(1, last.a + (Math.random() - 0.5) * 0.1))
+                });
+                drawTimeline();
+            }, 500);
+        }
+
+        // Cycle emotions
+        const emotions = [
+            { icon: ' ', name: 'Joy' },
+            { icon: ' ', name: 'Curiosity' },
+            { icon: ' ', name: 'Love' },
+            { icon: ' ', name: 'Excitement' },
+            { icon: ' ', name: 'Calm' },
+        ];
+        let emoIdx = 0;
+        setInterval(() => {
+            emoIdx = (emoIdx + 1) % emotions.length;
+            const e = emotions[emoIdx];
+            document.getElementById('demo-emotion-icon').textContent = e.icon;
+            document.getElementById('demo-emotion-name').textContent = e.name;
+            document.getElementById('demo-intensity').style.width = (50 + Math.random() * 40) + '%';
+        }, 3000);
+    </script>
+</body>
+</html>
