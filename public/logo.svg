@@ -1,16 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40">
   <defs>
-    <linearGradient id="moon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#b8a9ff;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#7c5cff;stop-opacity:1" />
+    <linearGradient id="hair-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c8b8e8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="eye-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c5cff;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#ff5caa;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#7c5cff;stop-opacity:0.4" />
-      <stop offset="100%" style="stop-color:#ff5caa;stop-opacity:0.2" />
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c5cff;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff5caa;stop-opacity:0.8" />
     </linearGradient>
     <filter id="glow">
-      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -18,27 +21,46 @@
     </filter>
   </defs>
 
-  <!-- Outer glow -->
-  <circle cx="32" cy="32" r="28" fill="url(#glow-grad)" opacity="0.3"/>
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg-grad)" opacity="0.15"/>
 
-  <!-- Crescent moon -->
-  <path d="M 38 8 A 24 24 0 1 0 38 56 A 18 18 0 1 1 38 8 Z" fill="url(#moon-grad)" filter="url(#glow)"/>
+  <!-- Hair back -->
+  <ellipse cx="32" cy="28" rx="22" ry="24" fill="url(#hair-grad)"/>
 
-  <!-- Small stars -->
-  <circle cx="14" cy="18" r="1.5" fill="#e0e0ff" opacity="0.9">
-    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="3s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="20" cy="42" r="1" fill="#e0e0ff" opacity="0.7">
-    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="10" cy="32" r="0.8" fill="#ff5caa" opacity="0.8">
-    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="4s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="18" cy="10" r="0.7" fill="#5cffc7" opacity="0.6">
-    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.5s" repeatCount="indefinite"/>
-  </circle>
+  <!-- Face -->
+  <ellipse cx="32" cy="32" rx="16" ry="18" fill="#ffe4d6"/>
 
-  <!-- Subtle inner detail -->
-  <circle cx="40" cy="22" r="2" fill="rgba(255,255,255,0.15)"/>
-  <circle cx="44" cy="34" r="1.5" fill="rgba(255,255,255,0.1)"/>
+  <!-- Hair front -->
+  <path d="M 14 22 Q 18 8 32 10 Q 46 8 50 22 Q 48 16 42 14 Q 38 18 32 12 Q 26 18 22 14 Q 16 16 14 22 Z" fill="url(#hair-grad)"/>
+
+  <!-- Hair sides (long) -->
+  <path d="M 14 24 Q 10 32 12 44 Q 14 46 16 42 Q 14 34 16 26 Z" fill="url(#hair-grad)"/>
+  <path d="M 50 24 Q 54 32 52 44 Q 50 46 48 42 Q 50 34 48 26 Z" fill="url(#hair-grad)"/>
+
+  <!-- Eyes -->
+  <ellipse cx="25" cy="32" rx="4" ry="5" fill="url(#eye-grad)" filter="url(#glow)"/>
+  <ellipse cx="39" cy="32" rx="4" ry="5" fill="url(#eye-grad)" filter="url(#glow)"/>
+
+  <!-- Eye shine -->
+  <circle cx="26.5" cy="30.5" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="40.5" cy="30.5" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="24" cy="33" r="0.8" fill="white" opacity="0.5"/>
+  <circle cx="38" cy="33" r="0.8" fill="white" opacity="0.5"/>
+
+  <!-- Eyebrows -->
+  <path d="M 21 26 Q 25 24 29 26" stroke="#c8b8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M 35 26 Q 39 24 43 26" stroke="#c8b8e8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+  <!-- Nose -->
+  <path d="M 31 36 Q 32 37.5 33 36" stroke="#e8c8b8" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Mouth (small smile) -->
+  <path d="M 28 41 Q 32 44 36 41" stroke="#e88080" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+  <!-- Blush -->
+  <ellipse cx="22" cy="38" rx="3" ry="2" fill="#ffaaaa" opacity="0.3"/>
+  <ellipse cx="42" cy="38" rx="3" ry="2" fill="#ffaaaa" opacity="0.3"/>
+
+  <!-- Hair accessory (small star) -->
+  <polygon points="46,14 47.5,17 51,17.5 48.5,19.5 49,23 46,21 43,23 43.5,19.5 41,17.5 44.5,17" fill="#ffd700" opacity="0.8" filter="url(#glow)"/>
 </svg>
