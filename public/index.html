@@ -111,27 +111,26 @@
 
         /* ===== HERO ===== */
         .hero {
-            min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 90px 24px 40px;
+            text-align: center; padding: 70px 24px 30px;
         }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 5px 14px; border-radius: 100px;
             background: rgba(124, 92, 255, 0.08); border: 1px solid rgba(124, 92, 255, 0.15);
             color: var(--accent); font-size: 0.75em; font-weight: 500;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         .hero h1 {
             font-size: clamp(2.5em, 6vw, 4.5em); font-weight: 900;
-            line-height: 1.08; margin-bottom: 14px; letter-spacing: -0.03em;
+            line-height: 1.08; margin-bottom: 10px; letter-spacing: -0.03em;
         }
         .hero h1 span {
             background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .hero p { font-size: 1.05em; color: var(--dim); max-width: 480px; line-height: 1.6; margin-bottom: 24px; }
-        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .hero p { font-size: 1em; color: var(--dim); max-width: 460px; line-height: 1.55; margin-bottom: 20px; }
+        .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .btn {
             padding: 13px 28px; border-radius: var(--radius-sm); font-size: 0.88em; font-weight: 600;
             text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px;
@@ -142,7 +141,7 @@
         .btn-secondary:hover { border-color: var(--accent); background: var(--card-hover); }
 
         .install-box {
-            margin-top: 24px; padding: 12px 20px;
+            margin-top: 18px; padding: 10px 18px;
             background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: var(--radius-sm);
             font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
             color: var(--accent3); cursor: pointer; transition: border-color 0.2s;
@@ -238,7 +237,7 @@
             .nav-links { gap: 16px; }
             .nav-links a { font-size: 0.75em; }
             .nav-brand { display: none; }
-            .hero { padding: 80px 16px 30px; }
+            .hero { padding: 60px 16px 20px; }
             .hero h1 { font-size: 2.2em; }
             .hero p { font-size: 0.95em; }
             .container { padding: 0 16px; }
